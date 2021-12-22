@@ -15,9 +15,9 @@ module.exports = app => {
 
     app.post('/atendimentos', (req, res) => {
         const atendimento = req.body
-        Atendimento.adiciona(atendimento, res)
-        //console.log(req.body);
-        // res.send('Você está na rota de atendimentos e está realizando um POST')
+        Atendimento.adiciona(atendimento)
+        .then(atendimentoCadastrado => res.status(201).json(atendimentoCadastrado))
+        .catch(erros => res.status(400).json(erros))
 
     })
 
