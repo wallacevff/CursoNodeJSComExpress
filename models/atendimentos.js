@@ -1,4 +1,4 @@
-const conexao = require('../infraestrutura/conexao')
+const conexao = require('../infraestrutura/database/conexao')
 const moment = require('moment')
 const e = require('express')
 const { default: axios } = require('axios')

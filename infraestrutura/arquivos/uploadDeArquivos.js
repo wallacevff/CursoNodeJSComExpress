@@ -4,7 +4,7 @@ module.exports = (caminho, nomeDoArquivo, callbackImagemCriada) => {
     const tiposValidos = ['jpg', 'png', 'jpeg', 'gif']
     const tipo = path.extname(caminho)
     const tipoEhValido = tiposValidos.indexOf(tipo.substring(1)) !== -1
-    const novoCaminho = `./assets/imagens/${nomeDoArquivo}${tipo}`
+    const novoCaminho = `../../assets/imagens/${nomeDoArquivo}${tipo}`
    //const novoCaminho = `./assets/imagens/${nomeDoArquivo}`
    if(!tipoEhValido){
        const erro = "Tipo é invalido"
