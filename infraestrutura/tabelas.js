@@ -2,12 +2,13 @@ class Tabelas {
     init(conexao) {
         this.conexao = conexao
         this.criarAtendimentos()
+        this.criarPets()
     }
 
     criarAtendimentos() {
         const sql = 'CREATE TABLE if not exists Atendimentos(\
             id int NOT NULL AUTO_INCREMENT PRIMARY KEY,\
-            cliente varchar(50) NOT NULL,\
+            cliente varchar(11) NOT NULL,\
             pet varchar(20),\
             servico varchar(20) NOT NULL,\
             `data` datetime NOT NULL,\
@@ -20,6 +21,25 @@ class Tabelas {
             }
             else {
                 console.log('Tabela atedimentos criada com sucesso')
+            }
+        })
+    }
+
+    criarPets() {
+        const query = 
+        'CREATE TABLE IF NOT EXISTS pets(\
+            id int not null auto_increment primary key,\
+            nome varchar(50),\
+            imagem varchar(200)\
+        );'
+
+        this.conexao.query(query, erro => {
+            if(erro) {
+                console.log(erro)
+
+            }
+            else{
+                console.log('Tabela Pets criada com ucesso')
             }
         })
     }

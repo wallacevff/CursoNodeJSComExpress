@@ -1,15 +1,17 @@
 const conexao = require('../infraestrutura/conexao')
 const moment = require('moment')
 const e = require('express')
+const { default: axios } = require('axios')
 class Atendimento {
     adiciona(atendimento, res) {
-        const dataCriacao = moment().format('YYYY-MM-DD HH:MM:SS')
-        const data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
+        var dataCriacao =  moment().format('YYYY-MM-DD HH:MM:SS')
+        var data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
 
-        const dataEhValida = moment(data).isSameOrAfter(dataCriacao)
-        const clienteEhValido = atendimento.cliente.lenght > 4
-
-        const validacoes = [
+        var dataEhValida = moment(data).isSameOrAfter(dataCriacao)
+        var clienteEhValido = atendimento.cliente.length > 4
+       console.log(dataEhValida)
+        console.log(atendimento.cliente.length)
+        var validacoes = [    
             {
                 nome: 'data',
                 valido: dataEhValida,
@@ -18,7 +20,7 @@ class Atendimento {
 
             {
                 nome: 'cliente',
-                valido: 'clienteEhValido',
+                valido: clienteEhValido,
                 mensagem: 'Cliente deve ter pelo menos cinco caracteres'
             }
         ]
@@ -40,7 +42,7 @@ class Atendimento {
                     res.status(400).json(erro)
                 }
                 else {
-                    res.status(201).json({atendimento})
+                    res.status(201).json({ atendimento })
                 }
 
             })
@@ -63,44 +65,47 @@ class Atendimento {
 
     buscaPorId(id, res) {
         const sql = `SELECT * FROM atendimentos WHERE id=${id};`
-        conexao.query(sql, (erro, resultados) => {
+        conexao.query(sql, async (erro, resultados) => {
             const atendimento = resultados[0]
+            const cpf = atendimento.cliente
             if (erro) {
                 res.status(400).json(erro)
             }
             else {
+                const { data } = await axios.get(`http://localhost:8082/${cpf}`)
+                atendimento.cliente = data
                 res.status(200).json(atendimento)
             }
 
         })
     }
 
-    altera(id, valores, res){
-        if(valores.data){            
+    altera(id, valores, res) {
+        if (valores.data) {
             valores.data = moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
-            
+
         }
-       
+
         const sql = 'UPDATE atendimentos SET ? WHERE id=?;'
         conexao.query(sql, [valores, id], (erro, resultados) => {
-            if(erro){
+            if (erro) {
                 res.status(400).json(erro)
             }
-            else{
+            else {
                 res.status(200).json(...valores, id)
             }
 
         })
     }
 
-    deleta(id, res){
+    deleta(id, res) {
         const sql = 'DELETE FROM atendimentos WHERE id = ?;'
         conexao.query(sql, id, (erro, resultados) => {
-            if(erro){
+            if (erro) {
                 res.status(400).json(erro)
             }
-            else{
-                res.status(200).json({id})
+            else {
+                res.status(200).json({ id })
             }
         })
     }
