@@ -20,6 +20,14 @@ class Atendimento {
         ]
         this.dataEhValida = (data, dataCriacao) => moment(data).isSameOrAfter(dataCriacao)
         this.clienteEhValido = (tamanho) => tamanho > 4
+        this.valida = (parametros) => {
+            this.validacoes.filter(campo => {
+                const {nome} = campo
+                const parametro = parametros[nome]
+
+                return !campo.valido(parametro)
+            })
+        }
     }
     adiciona(atendimento) {
         var dataCriacao = moment().format('YYYY-MM-DD HH:MM:SS')
@@ -31,8 +39,11 @@ class Atendimento {
         console.log(dataEhValida)
         console.log(atendimento.cliente.length)
         
-
-        const erros = validacoes.filter(campo => !campo.valido)
+        const parametros = {
+            data: {data, dataCriacao},
+            cliente: {tamanho: atendimento.length}
+        }
+        const erros = this.valida(parametros)
 
         const existemErros = erros.length
 
