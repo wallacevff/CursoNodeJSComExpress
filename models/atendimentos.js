@@ -5,14 +5,14 @@ const repositorio = require('../repositorios/atendimentos')
 class Atendimento {
     constructor() {
         this.dataEhValida = ({data, dataCriacao}) => moment(data).isSameOrAfter(dataCriacao)
-        this.clienteEhValido = tamanho => tamanho > 4
+        this.clienteEhValido = ({tamanho}) => tamanho > 4
 
         this.valida = parametros => 
             this.validacoes.filter(campo => {
                 const { nome } = campo
                 const parametro = parametros[nome]
 
-                return !campo.valido(parametro)
+                return campo.valido(parametro) == false
             })
         
         this.validacoes = [
@@ -43,7 +43,7 @@ class Atendimento {
 
         const erros = this.valida(parametros)
 
-        console.log(erros)
+        //console.log(erros)
 
         const existemErros = erros.length
 
@@ -55,23 +55,15 @@ class Atendimento {
 
             return repositorio.adiciona(atendimentoDatado).then((resultados) => {
                 const id = resultados.insertId
-                return { id, ...atendimento,}
+                return { id, ...atendimento}
             })           
         }
         
     }
 
-    lista(res) {
-        const sql = 'SELECT * FROM atendimentos'
-        conexao.query(sql, (erro, resultados) => {
-            if (erro) {
-                res.status(400).json(erro)
-            }
-            else {
-                res.status(200).json(resultados)
-            }
-        })
-    }
+   lista(){
+       return repositorio.lista()
+   }
 
     buscaPorId(id, res) {
         const sql = `SELECT * FROM atendimentos WHERE id=${id};`
