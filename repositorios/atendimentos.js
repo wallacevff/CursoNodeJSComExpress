@@ -7,5 +7,5 @@ class Atendimento {
         return query(sql, atendimento)
     }
 }
-
+ 
 module.exports = new Atendimento
