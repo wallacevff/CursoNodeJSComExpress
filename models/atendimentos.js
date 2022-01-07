@@ -1,49 +1,49 @@
 const conexao = require('../infraestrutura/database/conexao')
 const moment = require('moment')
-const e = require('express')
-const { default: axios } = require('axios')
+const axios = require('axios')
 const repositorio = require('../repositorios/atendimentos')
 class Atendimento {
     constructor() {
+        this.dataEhValida = ({data, dataCriacao}) => moment(data).isSameOrAfter(dataCriacao)
+        this.clienteEhValido = tamanho => tamanho > 4
+
+        this.valida = parametros => 
+            this.validacoes.filter(campo => {
+                const { nome } = campo
+                const parametro = parametros[nome]
+
+                return !campo.valido(parametro)
+            })
+        
         this.validacoes = [
             {
                 nome: 'data',
                 valido: this.dataEhValida,
                 mensagem: 'Data deve ser maior ou igual a data atual'
             },
-
             {
                 nome: 'cliente',
                 valido: this.clienteEhValido,
                 mensagem: 'Cliente deve ter pelo menos cinco caracteres'
             }
-        ]
-        this.dataEhValida = (data, dataCriacao) => moment(data).isSameOrAfter(dataCriacao)
-        this.clienteEhValido = (tamanho) => tamanho > 4
-        this.valida = (parametros) => {
-            this.validacoes.filter(campo => {
-                const {nome} = campo
-                const parametro = parametros[nome]
-
-                return !campo.valido(parametro)
-            })
-        }
+        ]   
+     
     }
     adiciona(atendimento) {
         var dataCriacao = moment().format('YYYY-MM-DD HH:MM:SS')
         var data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
 
         const parametros = {
-            data: {data, dataCriacao}
+            data: { data, dataCriacao },
+            cliente: { tamanho: atendimento.cliente.length }
         }
-        console.log(dataEhValida)
-        console.log(atendimento.cliente.length)
         
-        const parametros = {
-            data: {data, dataCriacao},
-            cliente: {tamanho: atendimento.length}
-        }
+       
+        
+
         const erros = this.valida(parametros)
+
+        console.log(erros)
 
         const existemErros = erros.length
 
@@ -58,6 +58,7 @@ class Atendimento {
                 return { id, ...atendimento,}
             })           
         }
+        
     }
 
     lista(res) {
